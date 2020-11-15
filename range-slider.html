@@ -1,0 +1,124 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <link href="nouislider.css" rel="stylesheet">
+    <style>
+        .slider-container {
+            width: 400px;
+            margin: 80px;
+        }
+    </style>
+    <script src="polyfill7.0.0.min.js"></script>
+    <script src="scxml5.0.4.min.js"></script>
+</head>
+
+<body>
+    <div class="slider-container">
+        <div id="slider"></div>
+    </div>
+
+    <script src="nouislider.js"></script>
+    <script>
+        const slider = document.getElementById('slider');
+
+        noUiSlider.create(slider, {
+            start: [0, 10],
+            behaviour: 'drag-unconstrained-tap',
+            connect: true,
+            step: 1,
+            tooltips: [true, true],
+            range: {
+                'min': 0,
+                'max': 10
+            }
+        });
+
+        const connectBar = slider.querySelector('.noUi-connect.noUi-draggable');
+        const handleA = slider.querySelector('.noUi-handle-lower');
+        const handleB = slider.querySelector('.noUi-handle-upper');
+
+        const listeners = {
+            // onEntry: function (stateId) { console.log('entering state ' + stateId); },
+            // onExit: function (stateId) { console.log('exiting state ' + stateId); },
+            onTransition: function (sourceStateId, targetIds) {
+                if (targetIds && targetIds.length) {
+                    // console.log('transitioning from ' + sourceStateId + ' to ' + targetIds.join(','));
+                    console.log(sourceStateId + ' -> ' + targetIds.join(','));
+                } else {
+                    console.log('executing target-less transition in ' + sourceStateId);
+                }
+            },
+            onError: function (err) {
+                console.log('ERROR:' + JSON.stringify(err));
+            }
+        };
+
+        function sliderToDataModel(slider) {
+            return {
+                minValue: slider.noUiSlider.options.range.min,
+                maxValue: slider.noUiSlider.options.range.max,
+                valueA: parseFloat(slider.noUiSlider.get()[0]),
+                valueB: parseFloat(slider.noUiSlider.get()[1])
+            };
+        }
+
+        var last_values = slider.noUiSlider.get().map(parseFloat);
+
+        scion.scxml.pathToModel('range-slider.scxml',
+            function (err, modelFactoryFactory) {
+                if (err) throw err;
+
+                modelFactoryFactory.prepare(function (err, modelFactory) {
+                    const sc = new scion.core.Statechart(modelFactory, {
+                        params: sliderToDataModel(slider)
+                    });
+                    sc.registerListener(listeners);
+
+                    function slideHandler(values, handle, unencoded, tap, positions, noUiSlider) {
+                        // values: Current slider values (array);
+                        // handle: Handle that caused the event (number);
+                        // unencoded: Slider values without formatting (array);
+                        // tap: Event was caused by the user tapping the slider (boolean);
+                        // positions: Left offset of the handles (array);
+                        // noUiSlider: slider public Api (noUiSlider);
+                        values = values.map(parseFloat);
+                        if (values[0] > last_values[0] && values[1] > last_values[1]) {
+                            // both handles are moved, i.e., the connecting bar is being dragged
+                            sc.gen('progressBar', values);
+                        }
+                        else if (values[0] < last_values[0] && values[1] < last_values[1]) {
+                            // both handles are moved, i.e., the connecting bar is being dragged
+                            sc.gen('regressBar', values);
+                        }
+                        else if (values[0] < last_values[0]) {
+                            // handleA is being dragged to the left
+                            sc.gen('regressA', values[0]);
+                        }
+                        else if (values[0] > last_values[0]) {
+                            // handleA is being dragged to the right
+                            sc.gen('progressA', values[0]);
+                        }
+                        else if (values[1] < last_values[1]) {
+                            // handleB is being dragged to the left
+                            sc.gen('regressB', values[1]);
+                        }
+                        else if (values[1] > last_values[1]) {
+                            // handleB is being dragged to the right
+                            sc.gen('progressB', values[1]);
+                        }
+                        last_values = values;
+                        console.log(sc.getSnapshot()[3], sc.getConfiguration());
+                    }
+
+                    slider.noUiSlider.on('slide', slideHandler);
+
+                    sc.start();
+                    console.log(sc.getSnapshot());
+                    console.log(sc.getConfiguration());
+                })
+            });
+    </script>
+</body>
+
+</html>
