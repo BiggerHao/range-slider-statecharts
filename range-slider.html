@@ -3,16 +3,23 @@
 
 <head>
     <title>Range slider demo</title>
-    <link rel="shortcut icon" href="#"/>
+    <link rel="shortcut icon" href="#" />
     <link href="nouislider.css" rel="stylesheet">
     <style>
         .slider-container {
             width: 400px;
             margin: 80px;
         }
+        .noUi-handle-lower .noUi-tooltip {
+            background-color: #E1BEE7;
+        }
+        .noUi-handle-upper .noUi-tooltip {
+            background-color: #BBDEFB;
+        }
     </style>
     <script src="polyfill7.0.0.min.js"></script>
     <script src="scxml5.0.4.min.js"></script>
+    <script src="wNumb.min.js"></script>
 </head>
 
 <body>
@@ -29,7 +36,29 @@
             behaviour: 'drag-unconstrained-tap',
             connect: true,
             step: 1,
-            tooltips: [true, true],
+            tooltips: [
+                {
+                    // 'to' the formatted value. Receives a number.
+                    to: function (value) {
+                        return '[A] ' + value;
+                    },
+                    // 'from' the formatted value.
+                    // Receives a string, should return a number.
+                    from: function (value) {
+                        return Number(value.slice(4));
+                    }
+                },
+                {
+                    // 'to' the formatted value. Receives a number.
+                    to: function (value) {
+                        return '[B] ' + value;
+                    },
+                    // 'from' the formatted value.
+                    // Receives a string, should return a number.
+                    from: function (value) {
+                        return Number(value.slice(4));
+                    }
+                }],
             range: {
                 'min': 0,
                 'max': 10

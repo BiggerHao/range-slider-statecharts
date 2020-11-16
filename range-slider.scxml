@@ -10,8 +10,8 @@
   <parallel id="slider">
     <state id="handleA" initial="waitingA">
       <state id="waitingA">
-        <transition cond="valueA==maxValue" target="maxA" />
-        <transition cond="valueA==minValue" target="minA" />
+        <transition cond="valueA == maxValue" target="maxA" />
+        <transition cond="valueA == minValue" target="minA" />
         <transition event="progressA" target="progressingA" />
         <transition event="regressA" target="regressingA" />
         <transition event="progressBar regressBar" target="updatingA" />
@@ -116,11 +116,11 @@
       </state>
       <state id="minBar">
         <transition event="progressBar" target="progressingBar" />
-        <transition event="progressA progressB regressA regressB" target="updatingBar" />
+        <transition event="progressA progressB" target="updatingBar" />
       </state>
       <state id="maxBar">
         <transition event="regressBar" target="regressingBar" />
-        <transition event="progressA progressB regressA regressB" target="updatingBar" />
+        <transition event="regressA regressB" target="updatingBar" />
       </state>
       <state id="movingBar">
         <transition event="progressA progressB regressA regressB" target="updatingBar" />
