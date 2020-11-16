@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<scxml datamodel="ecmascript" initial="slider" name="slider" version="1.0" xmlns:dbvis="dbvis" xmlns="http://www.w3.org/2005/07/scxml">
+<scxml datamodel="ecmascript" initial="slider" name="myRangeSlider" version="1.0" xmlns:dbvis="dbvis" xmlns="http://www.w3.org/2005/07/scxml">
   <datamodel>
     <data id="valueA" expr="0" />
     <data id="valueB" expr="10" />
@@ -62,7 +62,7 @@
         <transition event="progressB" target="progressingB" />
         <transition event="regressB" target="regressingB" />
         <transition event="progressBar" target="updatingB" />
-      <transition event="regressBar" target="updatingB" />
+        <transition event="regressBar" target="updatingB" />
       </state>
       <state id="minB">
         <transition event="progressB" target="progressingB" />
@@ -70,11 +70,11 @@
       </state>
       <state id="maxB">
         <transition event="regressB" target="regressingB" />
-      <transition event="regressBar" target="updatingB" />
+        <transition event="regressBar" target="updatingB" />
       </state>
       <state id="movingB">
         <transition event="progressBar" target="updatingB" />
-      <transition event="regressBar" target="updatingB" />
+        <transition event="regressBar" target="updatingB" />
         <state id="progressingB">
           <onentry>
             <assign location="valueB" expr="_event.data" />
