@@ -2,6 +2,7 @@
 <html>
 
 <head>
+    <title>Range slider demo</title>
     <link href="nouislider.css" rel="stylesheet">
     <style>
         .slider-container {
@@ -82,29 +83,37 @@
                         // tap: Event was caused by the user tapping the slider (boolean);
                         // positions: Left offset of the handles (array);
                         // noUiSlider: slider public Api (noUiSlider);
+
                         values = values.map(parseFloat);
-                        if (values[0] > last_values[0] && values[1] > last_values[1]) {
-                            // both handles are moved, i.e., the connecting bar is being dragged
+
+                        if (values[0] == last_values[0] && values[1] == last_values[1]) {
+                            // noUiSlider generates one event for each handle when the connecting bar is being dragged.
+                            // Since last_values are already updated by the first event, if both values do not change,
+                            // the event is a duplicate event for the other handle, which will be ignored. 
+                            return;
+                        }
+                        else if (values[0] > last_values[0] && values[1] > last_values[1]) {
+                            // Both handles are moved, i.e., the connecting bar is being dragged
                             sc.gen('progressBar', values);
                         }
                         else if (values[0] < last_values[0] && values[1] < last_values[1]) {
-                            // both handles are moved, i.e., the connecting bar is being dragged
+                            // Both handles are moved, i.e., the connecting bar is being dragged
                             sc.gen('regressBar', values);
                         }
                         else if (values[0] < last_values[0]) {
-                            // handleA is being dragged to the left
+                            // HandleA is being dragged to the left
                             sc.gen('regressA', values[0]);
                         }
                         else if (values[0] > last_values[0]) {
-                            // handleA is being dragged to the right
+                            // HandleA is being dragged to the right
                             sc.gen('progressA', values[0]);
                         }
                         else if (values[1] < last_values[1]) {
-                            // handleB is being dragged to the left
+                            // HandleB is being dragged to the left
                             sc.gen('regressB', values[1]);
                         }
                         else if (values[1] > last_values[1]) {
-                            // handleB is being dragged to the right
+                            // HandleB is being dragged to the right
                             sc.gen('progressB', values[1]);
                         }
                         last_values = values;
