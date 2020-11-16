@@ -10,16 +10,17 @@
             width: 400px;
             margin: 80px;
         }
+
         .noUi-handle-lower .noUi-tooltip {
             background-color: #E1BEE7;
         }
+
         .noUi-handle-upper .noUi-tooltip {
             background-color: #BBDEFB;
         }
     </style>
     <script src="polyfill7.0.0.min.js"></script>
     <script src="scxml5.0.4.min.js"></script>
-    <script src="wNumb.min.js"></script>
 </head>
 
 <body>
@@ -65,9 +66,8 @@
             }
         });
 
-        const connectBar = slider.querySelector('.noUi-connect.noUi-draggable');
-        const handleA = slider.querySelector('.noUi-handle-lower');
-        const handleB = slider.querySelector('.noUi-handle-upper');
+        const handleALayer = slider.querySelectorAll('.noUi-origin')[0];
+        const handleBLayer = slider.querySelectorAll('.noUi-origin')[1];
 
         const listeners = {
             // onEntry: function (stateId) { console.log('entering state ' + stateId); },
@@ -150,9 +150,42 @@
                         console.log(sc.getSnapshot()[3], sc.getConfiguration());
                     }
 
+                    function endHandler(values, handle, unencoded, tap, positions, noUiSlider) {
+                        // values: Current slider values (array);
+                        // handle: Handle that caused the event (number);
+                        // unencoded: Slider values without formatting (array);
+                        // tap: Event was caused by the user tapping the slider (boolean);
+                        // positions: Left offset of the handles (array);
+                        // noUiSlider: slider public Api (noUiSlider);
+
+                        if (values[0] == values[1]) {
+                            const handleALayerHeight = parseInt(handleALayer.style['z-index']);
+                            const handleBLayerHeight = parseInt(handleBLayer.style['z-index']);
+                            if (handleALayerHeight > handleBLayerHeight) {
+                                sc.gen('dieB');
+                            }
+                            else if (handleALayerHeight < handleBLayerHeight) {
+                                sc.gen('dieA');
+                            }
+                            console.log(sc.getSnapshot()[3], sc.getConfiguration());
+                        }
+                    }
+
                     slider.noUiSlider.on('slide', slideHandler);
+                    slider.noUiSlider.on('end', endHandler);
 
                     sc.start();
+                    // If initial values of both handle are equal, initialize them as dead
+                    if (last_values[0] == last_values[1]) {
+                        const handleALayerHeight = parseInt(handleALayer.style['z-index']);
+                        const handleBLayerHeight = parseInt(handleBLayer.style['z-index']);
+                        if (handleALayerHeight > handleBLayerHeight) {
+                            sc.gen('dieB');
+                        }
+                        else if (handleALayerHeight < handleBLayerHeight) {
+                            sc.gen('dieA');
+                        }
+                    }
                     console.log(sc.getSnapshot());
                     console.log(sc.getConfiguration());
                 })
