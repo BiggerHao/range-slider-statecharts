@@ -2,8 +2,8 @@
 <scxml datamodel="ecmascript" initial="slider" name="myRangeSlider" version="1.0" xmlns:dbvis="dbvis" xmlns="http://www.w3.org/2005/07/scxml">
   <datamodel>
     <data id="valueA" expr="0" />
-    <data id="valueB" expr="10" />
-    <data id="maxValue" expr="10" />
+    <data id="valueB" expr="0" />
+    <data id="maxValue" expr="0" />
     <data id="minValue" expr="0" />
   </datamodel>
 
@@ -14,8 +14,7 @@
         <transition cond="valueA==minValue" target="minA" />
         <transition event="progressA" target="progressingA" />
         <transition event="regressA" target="regressingA" />
-        <transition event="progressBar" target="updatingA" />
-        <transition event="regressBar" target="updatingA" />
+        <transition event="progressBar regressBar" target="updatingA" />
       </state>
       <state id="minA">
         <transition event="progressA" target="progressingA" />
@@ -26,10 +25,8 @@
         <transition event="regressBar" target="updatingA" />
       </state>
       <state id="movingA">
-        <transition event="progressBar" target="updatingA" />
-        <transition event="regressBar" target="updatingA" />
-        <transition event="progressB" target="waitingA" />
-        <transition event="regressB" target="waitingA" />
+        <transition event="progressBar regressBar" target="updatingA" />
+        <transition event="progressB regressB" target="waitingA" />
         <state id="progressingA">
           <onentry>
             <assign location="valueA" expr="_event.data" />
@@ -42,7 +39,7 @@
           <onentry>
             <assign location="valueA" expr="_event.data" />
           </onentry>
-          <transition cond="valueA==minValue" target="minA" />
+          <transition cond="valueA == minValue" target="minA" />
           <transition event="progressA" target="progressingA" />
           <transition event="regressA" target="regressingA" />
         </state>
@@ -51,12 +48,10 @@
         <!-- No need to update data here because progressBar and regressBar are also handled by another state machine in parallel. -->
         <transition cond="valueA == maxValue" target="maxA" />
         <transition cond="valueA == minValue" target="minA" />
-        <transition event="progressBar" target="updatingA" />
-        <transition event="regressBar" target="updatingA" />
+        <transition event="progressBar regressBar" target="updatingA" />
         <transition event="progressA" target="progressingA" />
         <transition event="regressA" target="regressingA" />
-        <transition event="progressB" target="waitingA" />
-        <transition event="regressB" target="waitingA" />
+        <transition event="progressB regressB" target="waitingA" />
       </state>
     </state>
 
@@ -66,8 +61,7 @@
         <transition cond="valueB == maxValue" target="maxB" />
         <transition event="progressB" target="progressingB" />
         <transition event="regressB" target="regressingB" />
-        <transition event="progressBar" target="updatingB" />
-        <transition event="regressBar" target="updatingB" />
+        <transition event="progressBar regressBar" target="updatingB" />
       </state>
       <state id="minB">
         <transition event="progressB" target="progressingB" />
@@ -78,15 +72,13 @@
         <transition event="regressBar" target="updatingB" />
       </state>
       <state id="movingB">
-        <transition event="progressBar" target="updatingB" />
-        <transition event="regressBar" target="updatingB" />
-        <transition event="progressA" target="waitingB" />
-        <transition event="regressA" target="waitingB" />
+        <transition event="progressBar regressBar" target="updatingB" />
+        <transition event="progressA regressA" target="waitingB" />
         <state id="progressingB">
           <onentry>
             <assign location="valueB" expr="_event.data" />
           </onentry>
-          <transition cond="valueB==maxValue" target="maxB" />
+          <transition cond="valueB == maxValue" target="maxB" />
           <transition event="progressB" target="progressingB" />
           <transition event="regressB" target="regressingB" />
         </state>
@@ -94,7 +86,7 @@
           <onentry>
             <assign location="valueB" expr="_event.data" />
           </onentry>
-          <transition cond="valueB==minValue" target="minB" />
+          <transition cond="valueB == minValue" target="minB" />
           <transition event="progressB" target="progressingB" />
           <transition event="regressB" target="regressingB" />
         </state>
@@ -103,12 +95,10 @@
         <!-- No need to update data here because progressBar and regressBar are also handled by another state machine in parallel. -->
         <transition cond="valueB == maxValue" target="maxB" />
         <transition cond="valueB == minValue" target="minB" />
-        <transition event="progressBar" target="updatingB" />
-        <transition event="regressBar" target="updatingB" />
+        <transition event="progressBar regressBar" target="updatingB" />
         <transition event="progressB" target="progressingB" />
         <transition event="regressB" target="regressingB" />
-        <transition event="progressA" target="waitingB" />
-        <transition event="regressA" target="waitingB" />
+        <transition event="progressA regressA" target="waitingB" />
       </state>
     </state>
 
@@ -119,36 +109,21 @@
         <transition cond="valueA == minValue || valueB == minValue" target="minBar" />
         <transition event="progressBar" target="progressingBar" />
         <transition event="regressBar" target="regressingBar" />
-        <transition event="progressA" target="updatingBar" />
-        <transition event="progressB" target="updatingBar" />
-        <transition event="regressA" target="updatingBar" />
-        <transition event="regressB" target="updatingBar" />
+        <transition event="progressA progressB regressA regressB" target="updatingBar" />
       </state>
       <state id="deadBar">
-        <transition event="progressA" target="updatingBar" />
-        <transition event="progressB" target="updatingBar" />
-        <transition event="regressA" target="updatingBar" />
-        <transition event="regressB" target="updatingBar" />
+        <transition event="progressA progressB regressA regressB" target="updatingBar" />
       </state>
       <state id="minBar">
         <transition event="progressBar" target="progressingBar" />
-        <transition event="progressA" target="updatingBar" />
-        <transition event="progressB" target="updatingBar" />
-        <transition event="regressA" target="updatingBar" />
-        <transition event="regressB" target="updatingBar" />
+        <transition event="progressA progressB regressA regressB" target="updatingBar" />
       </state>
       <state id="maxBar">
         <transition event="regressBar" target="regressingBar" />
-        <transition event="progressA" target="updatingBar" />
-        <transition event="progressB" target="updatingBar" />
-        <transition event="regressA" target="updatingBar" />
-        <transition event="regressB" target="updatingBar" />
+        <transition event="progressA progressB regressA regressB" target="updatingBar" />
       </state>
       <state id="movingBar">
-        <transition event="progressA" target="updatingBar" />
-        <transition event="progressB" target="updatingBar" />
-        <transition event="regressA" target="updatingBar" />
-        <transition event="regressB" target="updatingBar" />
+        <transition event="progressA progressB regressA regressB" target="updatingBar" />
         <state id="progressingBar">
           <onentry>
             <assign location="valueA" expr="_event.data[0]" />
@@ -175,10 +150,7 @@
         <transition cond="valueA == minValue || valueB == minValue" target="minBar" />
         <transition event="progressBar" target="progressingBar" />
         <transition event="regressBar" target="regressingBar" />
-        <transition event="progressA" target="updatingBar" />
-        <transition event="progressB" target="updatingBar" />
-        <transition event="regressA" target="updatingBar" />
-        <transition event="regressB" target="updatingBar" />
+        <transition event="progressA progressB regressA regressB" target="updatingBar" />
       </state>
     </state>
   </parallel>
