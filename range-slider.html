@@ -68,6 +68,14 @@
 
         const handleALayer = slider.querySelectorAll('.noUi-origin')[0];
         const handleBLayer = slider.querySelectorAll('.noUi-origin')[1];
+        const handleA = slider.querySelector('.noUi-handle-lower');
+        const handleB = slider.querySelector('.noUi-handle-upper');
+        const connectingBar = slider.querySelector('.noUi-connect.noUi-draggable');
+
+        var draggingA = false;
+        var draggingB = false;
+        var draggingBar = false;
+        var endEventCounter = 2;
 
         const listeners = {
             // onEntry: function (stateId) { console.log('entering state ' + stateId); },
@@ -157,6 +165,33 @@
                         // tap: Event was caused by the user tapping the slider (boolean);
                         // positions: Left offset of the handles (array);
                         // noUiSlider: slider public Api (noUiSlider);
+                        if (draggingBar) {
+                            console.log('endEventCounter =', endEventCounter);
+                            if (endEventCounter > 0) {
+                                endEventCounter--;
+                            }
+                            if (endEventCounter === 0) {
+                                draggingBar = false;
+                                sc.gen('stopMovingBar');
+                                if (!connectingBar.matches(':hover')) {
+                                sc.gen('leaveBar');
+                            }
+                            }
+                        }
+                        else if (draggingA) {
+                            draggingA = false;
+                            sc.gen('stopMovingA');
+                            if (!handleA.matches(':hover')) {
+                                sc.gen('leaveA');
+                            }
+                        }
+                        else if (draggingB) {
+                            draggingB = false;
+                            sc.gen('stopMovingB');
+                            if (!handleB.matches(':hover')) {
+                                sc.gen('leaveB');
+                            }
+                        }
 
                         if (values[0] == values[1]) {
                             const handleALayerHeight = parseInt(handleALayer.style['z-index']);
@@ -167,15 +202,95 @@
                             else if (handleALayerHeight < handleBLayerHeight) {
                                 sc.gen('dieA');
                             }
-                            console.log(sc.getSnapshot()[3], sc.getConfiguration());
+                            // console.log(sc.getSnapshot()[3], sc.getConfiguration());
                         }
+                        console.log(sc.getSnapshot()[3], sc.getConfiguration());
                     }
 
                     slider.noUiSlider.on('slide', slideHandler);
                     slider.noUiSlider.on('end', endHandler);
 
+                    // handle mouseenter events
+                    function handleAMouseenterHandler() {
+                        // If the mouse enters handle A again when handle A is being dragged,
+                        // then ignore that event.
+                        if (!draggingA) {
+                            sc.gen('enterA');
+                            console.log('enter A');
+                            console.log(sc.getSnapshot()[3], sc.getConfiguration());
+                        }
+                    }
+
+                    function handleBMouseenterHandler() {
+                        // If the mouse enters handle B again when handle B is being dragged,
+                        // then ignore that event.
+                        if (!draggingB) {
+                            sc.gen('enterB');
+                            console.log('enter B');
+                            console.log(sc.getSnapshot()[3], sc.getConfiguration());
+                        }
+                    }
+
+                    function connectingBarMouseenterHandler() {
+                        // If the mouse enters the connecting bar again when it is being dragged,
+                        // or either handle is being dragged, then ignore that event.
+                        if (!draggingBar && !draggingA && !draggingB) {
+                            sc.gen('enterBar');
+                            console.log('enter Bar');
+                            console.log(sc.getSnapshot()[3], sc.getConfiguration());
+                        }
+                    }
+
+                    handleA.addEventListener('mouseenter', handleAMouseenterHandler);
+                    handleB.addEventListener('mouseenter', handleBMouseenterHandler);
+                    connectingBar.addEventListener('mouseenter', connectingBarMouseenterHandler);
+
+                    // handle mousedown events
+                    function handleAMousedownHandler() {
+                        draggingA = true;
+                    }
+
+                    function handleBMousedownHandler() {
+                        draggingB = true;
+                    }
+
+                    function connectingBarMousedownHandler() {
+                        draggingBar = true;
+                        endEventCounter = 2;
+                    }
+
+                    handleA.addEventListener('mousedown', handleAMousedownHandler);
+                    handleB.addEventListener('mousedown', handleBMousedownHandler);
+                    connectingBar.addEventListener('mousedown', connectingBarMousedownHandler);
+
+                    // handle mouseleave events
+                    function handleAMouseleaveHandler() {
+                        if (!draggingA) {
+                            sc.gen('leaveA');
+                            console.log(sc.getSnapshot()[3], sc.getConfiguration());
+                        }
+                    }
+
+                    function handleBMouseleaveHandler() {
+                        if (!draggingB) {
+                            sc.gen('leaveB');
+                            console.log(sc.getSnapshot()[3], sc.getConfiguration());
+                        }
+                    }
+
+                    function connectingBarMouseleaveHandler() {
+                        if (!draggingBar) {
+                            sc.gen('leaveBar');
+                            console.log(sc.getSnapshot()[3], sc.getConfiguration());
+                        }
+                    }
+
+                    handleA.addEventListener('mouseleave', handleAMouseleaveHandler);
+                    handleB.addEventListener('mouseleave', handleBMouseleaveHandler);
+                    connectingBar.addEventListener('mouseleave', connectingBarMouseleaveHandler);
+
                     sc.start();
-                    // If initial values of both handle are equal, initialize them as dead
+                    // If initial values of both handle are equal, initialize one of them as dead
                     if (last_values[0] == last_values[1]) {
                         const handleALayerHeight = parseInt(handleALayer.style['z-index']);
                         const handleBLayerHeight = parseInt(handleBLayer.style['z-index']);

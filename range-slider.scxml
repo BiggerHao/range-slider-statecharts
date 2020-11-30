@@ -8,18 +8,23 @@
   </datamodel>
 
   <parallel id="slider">
-    <state id="handleA" initial="waitingA">
+    <state id="handleA" initial="idleA">
       <state id="deadA">
-        <transition event="progressB regressB" target="waitingA" />
+        <transition event="progressB regressB" target="idleA" />
       </state>
       <state id="aliveA">
         <transition event="dieA" target="deadA" />
-        <state id="waitingA">
+        <state id="idleA">
           <transition cond="valueA == maxValue" target="maxA" />
           <transition cond="valueA == minValue" target="minA" />
+          <transition event="progressBar regressBar" target="updatingA" />
+          <transition event="enterA" target="waitingA" />
+        </state>
+        <state id="waitingA">
           <transition event="progressA" target="progressingA" />
           <transition event="regressA" target="regressingA" />
           <transition event="progressBar regressBar" target="updatingA" />
+          <transition event="leaveA" target="idleA" />
         </state>
         <state id="minA">
           <transition event="progressA" target="progressingA" />
@@ -31,7 +36,8 @@
         </state>
         <state id="movingA">
           <transition event="progressBar regressBar" target="updatingA" />
-          <transition event="progressB regressB" target="waitingA" />
+          <transition event="progressB regressB" target="idleA" />
+          <transition event="stopMovingA" target="waitingA" />
           <state id="progressingA">
             <onentry>
               <assign location="valueA" expr="_event.data" />
@@ -56,23 +62,29 @@
           <transition event="progressBar regressBar" target="updatingA" />
           <transition event="progressA" target="progressingA" />
           <transition event="regressA" target="regressingA" />
-          <transition event="progressB regressB" target="waitingA" />
+          <transition event="progressB regressB" target="idleA" />
+          <transition event="stopMovingBar" target="idleA" />
         </state>
       </state>
     </state>
 
-    <state id="handleB" initial="waitingB">
+    <state id="handleB" initial="idleB">
       <state id="deadB">
-        <transition event="progressA regressA" target="waitingB" />
+        <transition event="progressA regressA" target="idleB" />
       </state>
       <state id="aliveB">
         <transition event="dieB" target="deadB" />
-        <state id="waitingB">
-          <transition cond="valueB == minValue" target="minB" />
+        <state id="idleB">
           <transition cond="valueB == maxValue" target="maxB" />
+          <transition cond="valueB == minValue" target="minB" />
+          <transition event="progressBar regressBar" target="updatingB" />
+          <transition event="enterB" target="waitingB" />
+        </state>
+        <state id="waitingB">
           <transition event="progressB" target="progressingB" />
           <transition event="regressB" target="regressingB" />
           <transition event="progressBar regressBar" target="updatingB" />
+          <transition event="leaveB" target="idleB" />
         </state>
         <state id="minB">
           <transition event="progressB" target="progressingB" />
@@ -84,7 +96,8 @@
         </state>
         <state id="movingB">
           <transition event="progressBar regressBar" target="updatingB" />
-          <transition event="progressA regressA" target="waitingB" />
+          <transition event="progressA regressA" target="idleB" />
+          <transition event="stopMovingB" target="waitingB" />
           <state id="progressingB">
             <onentry>
               <assign location="valueB" expr="_event.data" />
@@ -109,23 +122,29 @@
           <transition event="progressBar regressBar" target="updatingB" />
           <transition event="progressB" target="progressingB" />
           <transition event="regressB" target="regressingB" />
-          <transition event="progressA regressA" target="waitingB" />
+          <transition event="progressA regressA" target="idleB" />
+          <transition event="stopMovingBar" target="idleB" />
         </state>
       </state>
     </state>
 
-    <state id="bar" initial="waitingBar">
+    <state id="bar" initial="idleBar">
       <state id="deadBar">
         <transition event="progressA progressB regressA regressB" target="updatingBar" />
       </state>
       <state id="aliveBar">
         <transition cond="(valueA == minValue &amp;&amp; valueB == maxValue) || (valueA == maxValue &amp;&amp; valueB == minValue) || valueA == valueB" target="deadBar" />
-        <state id="waitingBar">
+        <state id="idleBar">
           <transition cond="valueA == maxValue || valueB == maxValue" target="maxBar" />
           <transition cond="valueA == minValue || valueB == minValue" target="minBar" />
+          <transition event="progressA progressB regressA regressB" target="updatingBar" />
+          <transition event="enterBar" target="waitingBar" />
+        </state>
+        <state id="waitingBar">
           <transition event="progressBar" target="progressingBar" />
           <transition event="regressBar" target="regressingBar" />
           <transition event="progressA progressB regressA regressB" target="updatingBar" />
+          <transition event="leaveBar" target="idleBar" />
         </state>
         <state id="minBar">
           <transition event="progressBar" target="progressingBar" />
@@ -137,6 +156,7 @@
         </state>
         <state id="movingBar">
           <transition event="progressA progressB regressA regressB" target="updatingBar" />
+          <transition event="stopMovingBar" target="waitingBar" />
           <state id="progressingBar">
             <onentry>
               <assign location="valueA" expr="_event.data[0]" />
@@ -163,6 +183,7 @@
           <transition event="progressBar" target="progressingBar" />
           <transition event="regressBar" target="regressingBar" />
           <transition event="progressA progressB regressA regressB" target="updatingBar" />
+          <transition event="stopMovingA stopMovingB" target="idleBar" />
         </state>
       </state>
     </state>
