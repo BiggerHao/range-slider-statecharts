@@ -35,8 +35,6 @@
           <transition event="regressBar" target="updatingA" />
         </state>
         <state id="movingA">
-          <transition event="progressBar regressBar" target="updatingA" />
-          <transition event="progressB regressB" target="idleA" />
           <transition event="stopMovingA" target="waitingA" />
           <state id="progressingA">
             <onentry>
@@ -92,8 +90,6 @@
           <transition event="regressBar" target="updatingB" />
         </state>
         <state id="movingB">
-          <transition event="progressBar regressBar" target="updatingB" />
-          <transition event="progressA regressA" target="idleB" />
           <transition event="stopMovingB" target="waitingB" />
           <state id="progressingB">
             <onentry>
@@ -149,7 +145,6 @@
           <transition event="regressA regressB" target="updatingBar" />
         </state>
         <state id="movingBar">
-          <transition event="progressA progressB regressA regressB" target="updatingBar" />
           <transition event="stopMovingBar" target="waitingBar" />
           <state id="progressingBar">
             <onentry>
