@@ -60,9 +60,6 @@
           <transition cond="valueA == maxValue" target="maxA" />
           <transition cond="valueA == minValue" target="minA" />
           <transition event="progressBar regressBar" target="updatingA" />
-          <transition event="progressA" target="progressingA" />
-          <transition event="regressA" target="regressingA" />
-          <transition event="progressB regressB" target="idleA" />
           <transition event="stopMovingBar" target="idleA" />
         </state>
       </state>
@@ -120,9 +117,6 @@
           <transition cond="valueB == maxValue" target="maxB" />
           <transition cond="valueB == minValue" target="minB" />
           <transition event="progressBar regressBar" target="updatingB" />
-          <transition event="progressB" target="progressingB" />
-          <transition event="regressB" target="regressingB" />
-          <transition event="progressA regressA" target="idleB" />
           <transition event="stopMovingBar" target="idleB" />
         </state>
       </state>
@@ -180,8 +174,6 @@
           <!-- No need to update data here because progressA, progressB, regressA, and regressB are also handled by other state machines in parallel. -->
           <transition cond="valueA == maxValue || valueB == maxValue" target="maxBar" />
           <transition cond="valueA == minValue || valueB == minValue" target="minBar" />
-          <transition event="progressBar" target="progressingBar" />
-          <transition event="regressBar" target="regressingBar" />
           <transition event="progressA progressB regressA regressB" target="updatingBar" />
           <transition event="stopMovingA stopMovingB" target="idleBar" />
         </state>
